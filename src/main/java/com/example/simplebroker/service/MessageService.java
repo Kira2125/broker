@@ -1,0 +1,15 @@
+package com.example.simplebroker.service;
+
+import com.example.simplebroker.dto.rq.SendMessageTopicRqDto;
+import com.example.simplebroker.dto.rq.SendMessageBroadcastRqDto;
+import com.example.simplebroker.dto.rq.SendMessageDeviceRqDto;
+import com.example.simplebroker.dto.rs.MessageRsDto;
+
+import java.util.concurrent.LinkedBlockingQueue;
+
+public interface MessageService {
+    void sendMessageTopic(SendMessageTopicRqDto sendMessageTopicRqDto, String deviceName);
+    void sendMessageBroadcast(SendMessageBroadcastRqDto sendMessageBroadcastRqDto, String deviceName);
+    void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName);
+    LinkedBlockingQueue<MessageRsDto> getMessages(String deviceName);
+}
