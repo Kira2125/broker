@@ -30,7 +30,7 @@ public class DeviceServiceImpl implements DeviceService {
     public List<DeviceRsDto> getAllDevices() {
         return deviceRepository.getAll()
                 .stream()
-                .map((device) -> DeviceRsDto
+                .map(device -> DeviceRsDto
                         .builder()
                         .name(device.getName())
                         .build())

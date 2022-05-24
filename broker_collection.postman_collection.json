@@ -1,0 +1,258 @@
+{
+	"info": {
+		"_postman_id": "2a23781f-8a0c-49f5-853b-ba63b9932b92",
+		"name": "broker_collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9815710"
+	},
+	"item": [
+		{
+			"name": "message",
+			"item": [
+				{
+					"name": "broadcast_message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-DEVICE",
+								"value": "real",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\": \"hello my friend\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/broker/message/broadcast",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"message",
+								"broadcast"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-DEVICE",
+								"value": "another",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/broker/message",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "message_to_device",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-DEVICE",
+								"value": "real",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\": \"hello my frind\",\r\n    \"toDevice\": \"another\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/broker/message",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "message_to_topic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-DEVICE",
+								"value": "real",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\": \"hello my friend\",\r\n    \"topic\": \"NYParty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/broker/message/topic",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"message",
+								"topic"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "device",
+			"item": [
+				{
+					"name": "get_devices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/broker/device",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"device"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_device",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Lenovo21\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/broker/device",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"device"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "topic",
+			"item": [
+				{
+					"name": "create_topic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-DEVICE",
+								"value": "real",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"LAparty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/broker/topic",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"broker",
+								"topic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_topics",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "subscribe",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

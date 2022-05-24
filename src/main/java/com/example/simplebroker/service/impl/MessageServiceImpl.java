@@ -1,10 +1,10 @@
 package com.example.simplebroker.service.impl;
 
-import com.example.simplebroker.exception.CustomException;
 import com.example.simplebroker.dto.rq.SendMessageBroadcastRqDto;
 import com.example.simplebroker.dto.rq.SendMessageDeviceRqDto;
 import com.example.simplebroker.dto.rq.SendMessageTopicRqDto;
 import com.example.simplebroker.dto.rs.MessageRsDto;
+import com.example.simplebroker.exception.CustomException;
 import com.example.simplebroker.model.Device;
 import com.example.simplebroker.model.Message;
 import com.example.simplebroker.repository.DeviceRepository;
@@ -31,9 +31,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName) {
-        logService.checkForLogging(sendMessageDeviceRqDto.getMessage(), deviceName, List.of(sendMessageDeviceRqDto.getToDevice()));
         Device toDevice = deviceRepository.getByName(sendMessageDeviceRqDto.getToDevice());
         toDevice.getMessageQueue().add(createMessage(sendMessageDeviceRqDto.getMessage(), deviceName));
+        logService.checkForLogging(sendMessageDeviceRqDto.getMessage(), deviceName, List.of(sendMessageDeviceRqDto.getToDevice()));
     }
 
     @Override
@@ -45,24 +45,18 @@ public class MessageServiceImpl implements MessageService {
                 .stream()
                 .filter(device -> device.getTopics().contains(sendMessageTopicRqDto.getTopic()))
                 .collect(Collectors.toList());
+        subscribers.forEach(
+                device -> device.getMessageQueue().add(createMessageWithTopic(sendMessageTopicRqDto.getMessage(),
+                        deviceName, sendMessageTopicRqDto.getTopic())));
         logService.checkForLogging(sendMessageTopicRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
-        subscribers
-                .stream()
-                .peek(device -> device.getMessageQueue()
-                        .add(createMessageWithTopic(sendMessageTopicRqDto.getMessage(),
-                                deviceName, sendMessageTopicRqDto.getTopic())))
-                .collect(Collectors.toList());
     }
 
     @Override
     public void sendMessageBroadcast(SendMessageBroadcastRqDto sendMessageBroadcastRqDto, String deviceName) {
         List<Device> subscribers = getSubscribers(deviceName);
+        subscribers.forEach(
+                device -> device.getMessageQueue().add(createMessage(sendMessageBroadcastRqDto.getMessage(), deviceName)));
         logService.checkForLogging(sendMessageBroadcastRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
-        subscribers
-                .stream()
-                .peek(device -> device.getMessageQueue().add(createMessage(sendMessageBroadcastRqDto.getMessage(), deviceName)))
-                .collect(Collectors.toList());
-
     }
 
     @Override
@@ -90,22 +84,22 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private Message createMessageWithTopic(String message, String sender, String topic) {
-        return Message
-                .builder()
+        return create(message, sender)
                 .topic(topic)
-                .message(message)
-                .senderDeviceName(sender)
-                .date(new Timestamp(new Date().getTime()))
                 .build();
     }
 
     private Message createMessage(String message, String sender) {
+        return create(message, sender)
+                .build();
+    }
+
+    private Message.MessageBuilder create(String message, String sender) {
         return Message
                 .builder()
                 .message(message)
                 .senderDeviceName(sender)
-                .date(new Timestamp(new Date().getTime()))
-                .build();
+                .date(new Timestamp(new Date().getTime()));
     }
 
     private MessageRsDto mapMessageToDto(Message message) {

@@ -25,13 +25,14 @@ public class LogServiceImpl implements LogService {
         List<String> keywords = logList.stream()
                 .filter(message::contains)
                 .collect(Collectors.toList());
-        logRepository.save(Log
-                .builder()
-                .message(message)
-                .keywords(keywords)
-                .recipients(subscribers)
-                .sender(from)
-                .build());
-
+        if(!keywords.isEmpty()) {
+            logRepository.save(Log
+                    .builder()
+                    .message(message)
+                    .keywords(keywords)
+                    .recipients(subscribers)
+                    .sender(from)
+                    .build());
+        }
     }
 }
