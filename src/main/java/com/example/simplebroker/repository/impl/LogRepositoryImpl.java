@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Repository
 public class LogRepositoryImpl implements LogRepository {
+
     private final List<Log> logs = new CopyOnWriteArrayList<>();
 
     @Override

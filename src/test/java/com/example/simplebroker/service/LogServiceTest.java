@@ -26,15 +26,15 @@ public class LogServiceTest extends AbstractSpringBootTest {
     private final List<String> subscribers = List.of("lenovo22", "imac4");
 
     @Test
-    void should_save_data_to_log() {
+    public void should_save_data_to_log() {
         String logMessage = logList.toString().replaceAll(", |\\[|]", " ");
-        logService.checkForLogging(logMessage, fromDeviceName, subscribers);
-        Mockito.verify(logRepository, Mockito.times(1)).save(Mockito.any());
+        logService.logIfNeeded(logMessage, fromDeviceName, subscribers);
+        Mockito.verify(logRepository, Mockito.timeout(1000).times(1)).save(Mockito.any());
     }
 
     @Test
-    void should_not_save_data_to_log() {
-        logService.checkForLogging(noLogMessage, fromDeviceName, subscribers);
+    public void should_not_save_data_to_log() {
+        logService.logIfNeeded(noLogMessage, fromDeviceName, subscribers);
         Mockito.verify(logRepository, Mockito.times(0)).save(Mockito.any());
     }
 }

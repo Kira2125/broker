@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Builder(toBuilder = true)
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MessageRsDto {
+public class MessageDto {
     private String message;
     private String topic;
     private String senderDeviceName;

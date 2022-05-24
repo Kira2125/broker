@@ -11,9 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service for logging by keywords in message. Non-blocking
+ */
+
 @Service
 @RequiredArgsConstructor
 public class LogServiceImpl implements LogService {
+
     @Value("#{'${broker.log}'.split(',')}")
     private List<String> logList;
 
@@ -21,7 +26,7 @@ public class LogServiceImpl implements LogService {
 
     @Override
     @Async
-    public void checkForLogging(String message, String from, List<String> subscribers) {
+    public void logIfNeeded(String message, String from, List<String> subscribers) {
         List<String> keywords = logList.stream()
                 .filter(message::contains)
                 .collect(Collectors.toList());

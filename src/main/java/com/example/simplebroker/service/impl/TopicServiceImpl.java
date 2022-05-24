@@ -1,9 +1,10 @@
 package com.example.simplebroker.service.impl;
 
+import com.example.simplebroker.dto.rs.TopicsRsDto;
 import com.example.simplebroker.exception.CustomException;
 import com.example.simplebroker.dto.rq.TopicRqDto;
 import com.example.simplebroker.dto.rq.TopicSubscribeRqDto;
-import com.example.simplebroker.dto.rs.TopicRsDto;
+import com.example.simplebroker.dto.rs.TopicDto;
 import com.example.simplebroker.model.Device;
 import com.example.simplebroker.repository.DeviceRepository;
 import com.example.simplebroker.repository.TopicRepository;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class TopicServiceImpl implements TopicService {
+
     private final TopicRepository topicRepository;
     private final DeviceRepository deviceRepository;
 
@@ -26,11 +28,12 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<TopicRsDto> getAllTopics() {
-        return topicRepository.getAll()
+    public TopicsRsDto getAllTopics() {
+        List<TopicDto> topics = topicRepository.getAll()
                 .stream()
-                .map(TopicRsDto::new)
+                .map(TopicDto::new)
                 .collect(Collectors.toList());
+        return new TopicsRsDto(topics);
     }
 
     @Override

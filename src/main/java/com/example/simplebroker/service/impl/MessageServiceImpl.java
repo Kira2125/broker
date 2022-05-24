@@ -3,7 +3,8 @@ package com.example.simplebroker.service.impl;
 import com.example.simplebroker.dto.rq.SendMessageBroadcastRqDto;
 import com.example.simplebroker.dto.rq.SendMessageDeviceRqDto;
 import com.example.simplebroker.dto.rq.SendMessageTopicRqDto;
-import com.example.simplebroker.dto.rs.MessageRsDto;
+import com.example.simplebroker.dto.rs.MessageDto;
+import com.example.simplebroker.dto.rs.MessagesRsDto;
 import com.example.simplebroker.exception.CustomException;
 import com.example.simplebroker.model.Device;
 import com.example.simplebroker.model.Message;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
+
     private final DeviceRepository deviceRepository;
     private final TopicRepository topicRepository;
     private final LogService logService;
@@ -33,7 +35,7 @@ public class MessageServiceImpl implements MessageService {
     public void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName) {
         Device toDevice = deviceRepository.getByName(sendMessageDeviceRqDto.getToDevice());
         toDevice.getMessageQueue().add(createMessage(sendMessageDeviceRqDto.getMessage(), deviceName));
-        logService.checkForLogging(sendMessageDeviceRqDto.getMessage(), deviceName, List.of(sendMessageDeviceRqDto.getToDevice()));
+        logService.logIfNeeded(sendMessageDeviceRqDto.getMessage(), deviceName, List.of(sendMessageDeviceRqDto.getToDevice()));
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MessageServiceImpl implements MessageService {
         subscribers.forEach(
                 device -> device.getMessageQueue().add(createMessageWithTopic(sendMessageTopicRqDto.getMessage(),
                         deviceName, sendMessageTopicRqDto.getTopic())));
-        logService.checkForLogging(sendMessageTopicRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
+        logService.logIfNeeded(sendMessageTopicRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
     }
 
     @Override
@@ -56,18 +58,20 @@ public class MessageServiceImpl implements MessageService {
         List<Device> subscribers = getSubscribers(deviceName);
         subscribers.forEach(
                 device -> device.getMessageQueue().add(createMessage(sendMessageBroadcastRqDto.getMessage(), deviceName)));
-        logService.checkForLogging(sendMessageBroadcastRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
+        logService.logIfNeeded(sendMessageBroadcastRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
     }
 
+    //@TODO clear queue if all messages received by subscriber
+    //@TODO return batch of messages to avoid subscriber overload
     @Override
-    public LinkedBlockingQueue<MessageRsDto> getMessages(String deviceName) {
+    public MessagesRsDto getMessages(String deviceName) {
         Queue<Message> messageQueue = deviceRepository.getByName(deviceName).getMessageQueue();
-        LinkedBlockingQueue<MessageRsDto> messageRsDtos = messageQueue
+        LinkedBlockingQueue<MessageDto> messageDtos = messageQueue
                 .stream()
                 .map(this::mapMessageToDto)
                 .collect(Collectors.toCollection(LinkedBlockingQueue::new));
         messageQueue.clear();
-        return messageRsDtos;
+        return new MessagesRsDto(messageDtos);
     }
 
     private List<Device> getSubscribers(String deviceName) {
@@ -102,8 +106,8 @@ public class MessageServiceImpl implements MessageService {
                 .date(new Timestamp(new Date().getTime()));
     }
 
-    private MessageRsDto mapMessageToDto(Message message) {
-        return MessageRsDto
+    private MessageDto mapMessageToDto(Message message) {
+        return MessageDto
                 .builder()
                 .message(message.getMessage())
                 .senderDeviceName(message.getSenderDeviceName())

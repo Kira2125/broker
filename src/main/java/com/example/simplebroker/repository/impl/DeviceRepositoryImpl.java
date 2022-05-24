@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Repository
 public class DeviceRepositoryImpl implements DeviceRepository {
+
     private final List<Device> devices = new CopyOnWriteArrayList<>();
 
     public void add(Device device) {

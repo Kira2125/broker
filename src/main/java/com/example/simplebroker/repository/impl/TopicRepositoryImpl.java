@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Repository
 public class TopicRepositoryImpl implements TopicRepository {
+
     private final List<String> topics = new CopyOnWriteArrayList<>();
 
     public void add(String topic) {

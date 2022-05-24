@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Data
-public class DeviceRsDto {
-    private String name;
+public class DevicesRsDto {
+    private List<DeviceDto> devices;
 }

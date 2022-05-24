@@ -8,6 +8,7 @@ import java.util.concurrent.Executor;
 
 @Configuration
 public class SpringAsyncConfig {
+
     @Bean(name = "threadPoolTaskExecutor")
     public Executor threadPoolTaskExecutor() {
         return new ThreadPoolTaskExecutor();
