@@ -46,6 +46,10 @@ Run Spring Boot app using Maven or with java -jar command
 - Devices/subscribers (register, deregister)
 - Send messages to devices, topics and in brodcast mode
 
+## Demo
+
+https://eurofunk.kirak.de/broker (postman collection in code - postman/broker_collection.postman_collection.json)
+
 ## Upcoming tasks
 
 - add database store
