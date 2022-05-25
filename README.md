@@ -1,37 +1,53 @@
-Simple Message Broker
 
-Prerequisites:
--	jdk11+
--	maven
--	intellijIdea
+# Simple Message Broker
 
-
-Running the application:
--	Build Spring Boot Project with Maven:
-
-		- mvn package
-
--	Run Spring Boot app using Maven or with java -jar command:
-	
-		- mvn spring-boot:run
-
-		- java -jar target/simple-broker-0.0.1-SNAPSHOT.jar
-
-
-Description:
 Simple message broker with in-memory data store
 
-Functionality description:
 
-- topics (create, subscribe)
+## Prerequisites:
 
-- devices/subscribers (register, deregister)
+- jdk11+
 
-- send messages to devices, topics and in brodcast mode
-        
-Upcoming tasks:
+- maven
+
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/Kira2125/broker.git
+```
+
+Go to the project directory
+
+```bash
+  cd broker
+```
+
+Build Spring Boot Project with Maven
+
+```bash
+  mvn package
+```
+
+Run Spring Boot app using Maven or with java -jar command
+
+```bash
+  mvn spring-boot:run
+  java -jar target/simple-broker-0.0.1-SNAPSHOT.jar
+```
+
+
+## Functionality description
+
+- Topics (create, subscribe)
+- Devices/subscribers (register, deregister)
+- Send messages to devices, topics and in brodcast mode
+
+## Upcoming tasks
 
 - add database store
-
 - add batch consuming to avoid subscriber overloading
 
