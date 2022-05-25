@@ -6,6 +6,7 @@ import com.example.simplebroker.dto.rq.SendMessageTopicRqDto;
 import com.example.simplebroker.dto.rs.MessagesRsDto;
 import com.example.simplebroker.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,5 +65,15 @@ public class MessageController {
     @GetMapping
     public MessagesRsDto getMessages(@RequestHeader("X-DEVICE") String deviceName) {
         return messageService.getMessages(deviceName);
+    }
+
+    /**
+     * Acknowledge message receiving to clear queue
+     * @param deviceName - device/subscriber name
+     */
+
+    @DeleteMapping
+    public void acknowledgeMessages(@RequestHeader("X-DEVICE") String deviceName) {
+        messageService.acknowledgeMessages(deviceName);
     }
 }

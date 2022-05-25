@@ -14,4 +14,14 @@ public class Message {
     private String topic;
     private final String senderDeviceName;
     private final Timestamp date;
+    @Builder.Default
+    private Status status=Status.STABLE;
+
+    public enum Status{
+        PENDING, STABLE
+    }
+
+    public void changeMessageStatusToPending() {
+        this.status=Status.PENDING;
+    }
 }

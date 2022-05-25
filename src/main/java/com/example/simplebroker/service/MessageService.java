@@ -13,4 +13,5 @@ public interface MessageService {
     void sendMessageBroadcast(SendMessageBroadcastRqDto sendMessageBroadcastRqDto, String deviceName);
     void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName);
     MessagesRsDto getMessages(String deviceName);
+    void acknowledgeMessages(String deviceName);
 }

@@ -35,7 +35,8 @@ public class MessageServiceImpl implements MessageService {
     public void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName) {
         Device toDevice = deviceRepository.getByName(sendMessageDeviceRqDto.getToDevice());
         toDevice.getMessageQueue().add(createMessage(sendMessageDeviceRqDto.getMessage(), deviceName));
-        logService.logIfNeeded(sendMessageDeviceRqDto.getMessage(), deviceName, List.of(sendMessageDeviceRqDto.getToDevice()));
+        logService.logIfNeeded(sendMessageDeviceRqDto.getMessage(), deviceName,
+                List.of(sendMessageDeviceRqDto.getToDevice()));
     }
 
     @Override
@@ -57,21 +58,28 @@ public class MessageServiceImpl implements MessageService {
     public void sendMessageBroadcast(SendMessageBroadcastRqDto sendMessageBroadcastRqDto, String deviceName) {
         List<Device> subscribers = getSubscribers(deviceName);
         subscribers.forEach(
-                device -> device.getMessageQueue().add(createMessage(sendMessageBroadcastRqDto.getMessage(), deviceName)));
+                device -> device.getMessageQueue()
+                        .add(createMessage(sendMessageBroadcastRqDto.getMessage(), deviceName)));
         logService.logIfNeeded(sendMessageBroadcastRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
     }
 
-    //@TODO clear queue if all messages received by subscriber
     //@TODO return batch of messages to avoid subscriber overload
     @Override
     public MessagesRsDto getMessages(String deviceName) {
-        Queue<Message> messageQueue = deviceRepository.getByName(deviceName).getMessageQueue();
+        Device device = deviceRepository.getByName(deviceName);
+        device.changeMessagesStatusToPending();
+        Queue<Message> messageQueue = device.getMessageQueue();
         LinkedBlockingQueue<MessageDto> messageDtos = messageQueue
                 .stream()
                 .map(this::mapMessageToDto)
                 .collect(Collectors.toCollection(LinkedBlockingQueue::new));
-        messageQueue.clear();
         return new MessagesRsDto(messageDtos);
+    }
+
+    @Override
+    public void acknowledgeMessages(String deviceName) {
+        Device device = deviceRepository.getByName(deviceName);
+        device.deletePendingMessages();
     }
 
     private List<Device> getSubscribers(String deviceName) {
