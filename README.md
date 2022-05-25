@@ -23,6 +23,4 @@ What needs to be added?
 
 - database store
 
-- acknowledgment from subscribers about message consuming
-
 - batch consuming to avoid subscriber overloading
