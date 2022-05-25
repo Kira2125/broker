@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Сontroller for registering devices/subscribers in broker
- */
 
 @RestController
 @RequestMapping("/device")
@@ -23,28 +20,15 @@ public class DeviceController {
 
     private final DeviceService deviceService;
 
-    /**
-     * Register new device/subscriber in broker
-     * @param deviceRqDto - device info
-     */
-
     @PostMapping
     public void registerDevice(@RequestBody DeviceRqDto deviceRqDto) {
         deviceService.registerDevice(deviceRqDto);
     }
 
-    /**
-     * Remove device/subscriber from broker
-     * @param deviceName - device/subscriber name
-     */
     @DeleteMapping
     public void deregisterDevice(@RequestHeader("X-DEVICE") String deviceName) {
         deviceService.deregisterDevice(deviceName);
     }
-
-    /**
-     * Get all devices/subscribers in broker
-     */
 
     @GetMapping
     public DevicesRsDto allDevices() {

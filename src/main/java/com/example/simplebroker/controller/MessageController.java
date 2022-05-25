@@ -21,23 +21,11 @@ public class MessageController {
 
     private final MessageService messageService;
 
-    /**
-     * Send message to device/subscriber - one-to-one
-     * @param deviceName - device/subscriber name
-     * @param sendMessageDeviceRqDto - message body
-     */
-
     @PostMapping
     public void sendMessageToDevice(@RequestBody SendMessageDeviceRqDto sendMessageDeviceRqDto,
                                     @RequestHeader("X-DEVICE") String deviceName) {
         messageService.sendMessageDevice(sendMessageDeviceRqDto, deviceName);
     }
-
-    /**
-     * Send message to topic/group
-     * @param deviceName - device/subscriber name
-     * @param sendMessageTopicRqDto - message body
-     */
 
     @PostMapping("/topic")
     public void sendMessageToTopic(@RequestBody SendMessageTopicRqDto sendMessageTopicRqDto,
@@ -45,32 +33,16 @@ public class MessageController {
         messageService.sendMessageTopic(sendMessageTopicRqDto, deviceName);
     }
 
-    /**
-     * Send message to all broker devices/subscribers
-     * @param deviceName - device/subscriber name
-     * @param sendMessageBroadcastRqDto - message body
-     */
-
     @PostMapping("/broadcast")
     public void sendMessageBroadcast(@RequestBody SendMessageBroadcastRqDto sendMessageBroadcastRqDto,
                                      @RequestHeader("X-DEVICE") String deviceName) {
         messageService.sendMessageBroadcast(sendMessageBroadcastRqDto, deviceName);
     }
 
-    /**
-     * Get all new messages for device/subscriber
-     * @param deviceName - device/subscriber name
-     */
-
     @GetMapping
     public MessagesRsDto getMessages(@RequestHeader("X-DEVICE") String deviceName) {
         return messageService.getMessages(deviceName);
     }
-
-    /**
-     * Acknowledge message receiving to clear queue
-     * @param deviceName - device/subscriber name
-     */
 
     @DeleteMapping
     public void acknowledgeMessages(@RequestHeader("X-DEVICE") String deviceName) {

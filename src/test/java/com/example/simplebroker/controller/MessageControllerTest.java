@@ -40,7 +40,8 @@ public class MessageControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_send_message_to_broadcast() throws IOException {
-        var rq = objectMapper.readValue(getPath("json/send_message_broadcast_rq_200.json"), SendMessageBroadcastRqDto.class);
+        var rq = objectMapper
+                .readValue(getPath("json/send_message_broadcast_rq_200.json"), SendMessageBroadcastRqDto.class);
 
         RestAssured
                 .given()
@@ -57,7 +58,8 @@ public class MessageControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_send_message_to_device() throws IOException {
-        var rq = objectMapper.readValue(getPath("json/send_message_device_rq_200.json"), SendMessageDeviceRqDto.class);
+        var rq = objectMapper
+                .readValue(getPath("json/send_message_device_rq_200.json"), SendMessageDeviceRqDto.class);
 
         RestAssured
                 .given()
@@ -74,7 +76,8 @@ public class MessageControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_send_message_to_topic() throws IOException {
-        var rq = objectMapper.readValue(getPath("json/send_message_topic_rq_200.json"), SendMessageTopicRqDto.class);
+        var rq = objectMapper
+                .readValue(getPath("json/send_message_topic_rq_200.json"), SendMessageTopicRqDto.class);
 
         RestAssured
                 .given()
@@ -92,7 +95,8 @@ public class MessageControllerTest extends AbstractSpringBootTest {
     @Test
     public void should_get_all_messages() throws IOException {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        var expected = objectMapper.readValue(getPath("json/all_messages_rs_200.json"), MessagesRsDto.class);
+        var expected = objectMapper
+                .readValue(getPath("json/all_messages_rs_200.json"), MessagesRsDto.class);
         when(messageService.getMessages(DEVICE_NAME)).thenReturn(expected);
 
         RestAssured

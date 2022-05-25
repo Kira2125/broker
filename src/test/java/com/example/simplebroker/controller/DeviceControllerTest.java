@@ -35,7 +35,8 @@ public class DeviceControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_register_device() throws IOException {
-        var rq = objectMapper.readValue(getPath("json/register_device_rq_200.json"), DeviceRqDto.class);
+        var rq = objectMapper
+                .readValue(getPath("json/register_device_rq_200.json"), DeviceRqDto.class);
 
         RestAssured
                 .given()
@@ -64,7 +65,8 @@ public class DeviceControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_get_all_devices() throws IOException {
-        var expected = objectMapper.readValue(getPath("json/get_all_devices_rs_200.json"), DevicesRsDto.class);
+        var expected = objectMapper
+                .readValue(getPath("json/get_all_devices_rs_200.json"), DevicesRsDto.class);
         when(deviceService.getAllDevices()).thenReturn(expected);
 
         RestAssured

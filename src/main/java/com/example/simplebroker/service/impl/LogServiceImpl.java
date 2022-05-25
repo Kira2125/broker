@@ -11,10 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Service for logging by keywords in message. Non-blocking
- */
-
 @Service
 @RequiredArgsConstructor
 public class LogServiceImpl implements LogService {

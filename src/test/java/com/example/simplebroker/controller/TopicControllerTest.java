@@ -37,7 +37,8 @@ public class TopicControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_create_topic() throws IOException {
-        var rq = objectMapper.readValue(getPath("json/create_topic_rq_200.json"), TopicRqDto.class);
+        var rq = objectMapper
+                .readValue(getPath("json/create_topic_rq_200.json"), TopicRqDto.class);
 
         RestAssured
                 .given()
@@ -54,7 +55,8 @@ public class TopicControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_get_all_topics() throws IOException {
-        var expected = objectMapper.readValue(getPath("json/all_topics_rs_200.json"), TopicsRsDto.class);
+        var expected = objectMapper
+                .readValue(getPath("json/all_topics_rs_200.json"), TopicsRsDto.class);
         when(topicService.getAllTopics()).thenReturn(expected);
 
         RestAssured
@@ -70,7 +72,8 @@ public class TopicControllerTest extends AbstractSpringBootTest {
 
     @Test
     public void should_subscribe_topic() throws IOException {
-        var rq = objectMapper.readValue(getPath("json/subscribe_topic_rq_200.json"), TopicSubscribeRqDto.class);
+        var rq = objectMapper
+                .readValue(getPath("json/subscribe_topic_rq_200.json"), TopicSubscribeRqDto.class);
 
         RestAssured
                 .given()
