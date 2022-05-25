@@ -27,9 +27,17 @@ public class LogServiceImpl implements LogService {
     @Override
     @Async
     public void logIfNeeded(String message, String from, List<String> subscribers) {
-        List<String> keywords = logList.stream()
+        List<String> keywords = checkForKeywords(message);
+        logIfNeeded(message, from, subscribers, keywords);
+    }
+
+    private List<String> checkForKeywords(String message) {
+        return logList.stream()
                 .filter(message::contains)
                 .collect(Collectors.toList());
+    }
+
+    private void logIfNeeded(String message, String from, List<String> subscribers, List<String> keywords) {
         if(!keywords.isEmpty()) {
             logRepository.save(Log
                     .builder()

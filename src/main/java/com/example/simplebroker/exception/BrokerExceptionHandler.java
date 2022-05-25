@@ -23,6 +23,6 @@ public class BrokerExceptionHandler {
     public ResponseEntity<ErrorRsDto> handleUnexpectedException(Exception e) {
         log.error("unexpected exception", e);
         ErrorRsDto rs = new ErrorRsDto(DEFAULT_MESSAGE);
-        return new ResponseEntity<>(rs, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(rs, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

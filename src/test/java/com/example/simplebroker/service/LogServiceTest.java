@@ -35,6 +35,6 @@ public class LogServiceTest extends AbstractSpringBootTest {
     @Test
     public void should_not_save_data_to_log() {
         logService.logIfNeeded(noLogMessage, fromDeviceName, subscribers);
-        Mockito.verify(logRepository, Mockito.times(0)).save(Mockito.any());
+        Mockito.verify(logRepository, Mockito.timeout(1000).times(0)).save(Mockito.any());
     }
 }
