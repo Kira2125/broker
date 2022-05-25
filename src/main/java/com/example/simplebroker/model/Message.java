@@ -1,5 +1,6 @@
 package com.example.simplebroker.model;
 
+import com.example.simplebroker.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,10 +17,6 @@ public class Message {
     private final Timestamp date;
     @Builder.Default
     private Status status=Status.STABLE;
-
-    public enum Status{
-        PENDING, STABLE
-    }
 
     public void changeMessageStatusToPending() {
         this.status=Status.PENDING;

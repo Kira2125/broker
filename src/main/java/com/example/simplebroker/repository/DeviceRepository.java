@@ -14,4 +14,8 @@ public interface DeviceRepository {
     List<Device> getAll();
 
     Device getByName(String name);
+
+    void changeMessagesStatusToPendingByName(String deviceName);
+
+    void deletePendingMessagesByName(String deviceName);
 }

@@ -66,9 +66,8 @@ public class MessageServiceImpl implements MessageService {
     //@TODO return batch of messages to avoid subscriber overload
     @Override
     public MessagesRsDto getMessages(String deviceName) {
-        Device device = deviceRepository.getByName(deviceName);
-        device.changeMessagesStatusToPending();
-        Queue<Message> messageQueue = device.getMessageQueue();
+        deviceRepository.changeMessagesStatusToPendingByName(deviceName);
+        Queue<Message> messageQueue = deviceRepository.getByName(deviceName).getMessageQueue();
         LinkedBlockingQueue<MessageDto> messageDtos = messageQueue
                 .stream()
                 .map(this::mapMessageToDto)
@@ -78,8 +77,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void acknowledgeMessages(String deviceName) {
-        Device device = deviceRepository.getByName(deviceName);
-        device.deletePendingMessages();
+        deviceRepository.deletePendingMessagesByName(deviceName);
     }
 
     private List<Device> getSubscribers(String deviceName) {
