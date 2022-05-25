@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"message\": \"hello my friend\"\r\n}",
+							"raw": "{\r\n    \"message\": \"gonna love you\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -30,14 +30,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/broker/message/broadcast",
-							"protocol": "http",
+							"raw": "{{url}}/message/broadcast",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"message",
 								"broadcast"
 							]
@@ -52,19 +49,16 @@
 						"header": [
 							{
 								"key": "X-DEVICE",
-								"value": "another",
+								"value": "some",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/broker/message",
-							"protocol": "http",
+							"raw": "{{url}}/message",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"message"
 							]
 						}
@@ -84,7 +78,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"message\": \"hello my frind\",\r\n    \"toDevice\": \"another\"\r\n}",
+							"raw": "{\r\n    \"message\": \"hello my frind\",\r\n    \"toDevice\": \"some\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -92,14 +86,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/broker/message",
-							"protocol": "http",
+							"raw": "{{url}}/message",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"message"
 							]
 						}
@@ -113,28 +104,16 @@
 						"header": [
 							{
 								"key": "X-DEVICE",
-								"value": "real",
+								"value": "some",
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"message\": \"hello my frind\",\r\n    \"toDevice\": \"another\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://localhost:8080/broker/message",
-							"protocol": "http",
+							"raw": "{{url}}/message",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"message"
 							]
 						}
@@ -154,7 +133,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"message\": \"hello my frind\",\r\n    \"topic\": \"NYParty\"\r\n}",
+							"raw": "{\r\n    \"message\": \"hello my friend\",\r\n    \"topic\": \"NYParty\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -162,14 +141,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/broker/message/topic",
-							"protocol": "http",
+							"raw": "{{url}}/message/topic",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"message",
 								"topic"
 							]
@@ -188,14 +164,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/broker/device",
-							"protocol": "http",
+							"raw": "{{url}}/device",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"device"
 							]
 						}
@@ -209,7 +182,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Lenovo21\"\r\n}",
+							"raw": "{\r\n    \"name\": \"real\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -217,14 +190,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/broker/device",
-							"protocol": "http",
+							"raw": "{{url}}/device",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"device"
 							]
 						}
@@ -249,7 +219,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"LAparty\"\r\n}",
+							"raw": "{\r\n    \"name\": \"NYParty\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -257,14 +227,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/broker/topic",
-							"protocol": "http",
+							"raw": "{{url}}/topic",
 							"host": [
-								"localhost"
+								"{{url}}"
 							],
-							"port": "8080",
 							"path": [
-								"broker",
 								"topic"
 							]
 						}
@@ -275,7 +242,16 @@
 					"name": "get_topics",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{url}}/topic",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"topic"
+							]
+						}
 					},
 					"response": []
 				},
@@ -283,7 +259,32 @@
 					"name": "subscribe",
 					"request": {
 						"method": "POST",
-						"header": []
+						"header": [
+							{
+								"key": "X-DEVICE",
+								"value": "real",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"NYParty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/topic/subscribe",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"topic",
+								"subscribe"
+							]
+						}
 					},
 					"response": []
 				}
