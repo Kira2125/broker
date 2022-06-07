@@ -15,7 +15,7 @@ public interface DeviceRepository {
 
     Device getByName(String name);
 
-    void changeMessagesStatusToPendingByName(String deviceName);
+    void changeMessagesStatusToPendingByName(String deviceName, int batchSize);
 
-    void deletePendingMessagesByName(String deviceName);
+    void deletePendingMessagesByName(String deviceName, int batchSize);
 }

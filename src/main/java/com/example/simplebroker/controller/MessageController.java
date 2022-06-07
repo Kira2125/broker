@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -40,12 +41,14 @@ public class MessageController {
     }
 
     @GetMapping
-    public MessagesRsDto getMessages(@RequestHeader("X-DEVICE") String deviceName) {
-        return messageService.getMessages(deviceName);
+    public MessagesRsDto getMessages(@RequestHeader("X-DEVICE") String deviceName,
+                                     @RequestParam("batchSize") int batchSize) {
+        return messageService.getMessages(deviceName, batchSize);
     }
 
     @DeleteMapping
-    public void acknowledgeMessages(@RequestHeader("X-DEVICE") String deviceName) {
-        messageService.acknowledgeMessages(deviceName);
+    public void acknowledgeMessages(@RequestHeader("X-DEVICE") String deviceName,
+                                    @RequestParam("batchSize") int batchSize) {
+        messageService.acknowledgeMessages(deviceName, batchSize);
     }
 }

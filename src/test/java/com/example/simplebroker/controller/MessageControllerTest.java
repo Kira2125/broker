@@ -26,6 +26,7 @@ public class MessageControllerTest extends AbstractSpringBootTest {
     private final String MESSAGE_URL = "/broker/message";
     private final String BROADCAST_URL = MESSAGE_URL + "/broadcast";
     private final String TOPIC_URL = MESSAGE_URL + "/topic";
+    private final int BATCH_SIZE = 10;
 
     @LocalServerPort
     private int port;
@@ -97,7 +98,7 @@ public class MessageControllerTest extends AbstractSpringBootTest {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         var expected = objectMapper
                 .readValue(getPath("json/all_messages_rs_200.json"), MessagesRsDto.class);
-        when(messageService.getMessages(DEVICE_NAME)).thenReturn(expected);
+        when(messageService.getMessages(DEVICE_NAME, BATCH_SIZE)).thenReturn(expected);
 
         RestAssured
                 .given()
@@ -108,6 +109,6 @@ public class MessageControllerTest extends AbstractSpringBootTest {
                 .body(Matchers.equalTo(objectMapper.writeValueAsString(expected)))
                 .statusCode(200);
 
-        verify(messageService, times(1)).getMessages(DEVICE_NAME);
+        verify(messageService, times(1)).getMessages(DEVICE_NAME, BATCH_SIZE);
     }
 }
