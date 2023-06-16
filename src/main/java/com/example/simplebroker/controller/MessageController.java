@@ -24,7 +24,7 @@ public class MessageController {
     @PostMapping
     public void sendMessageToDevice(@RequestBody SendMessageDeviceRqDto sendMessageDeviceRqDto,
                                     @RequestHeader("X-DEVICE") String deviceName) {
-        messageService.sendMessageDevice(sendMessageDeviceRqDto, deviceName);
+        messageService.sendMessagePrivate(sendMessageDeviceRqDto, deviceName);
     }
 
     @PostMapping("/topic")

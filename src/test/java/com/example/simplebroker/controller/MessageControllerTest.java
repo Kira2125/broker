@@ -71,7 +71,7 @@ public class MessageControllerTest extends AbstractSpringBootTest {
                 .then()
                 .statusCode(200);
 
-        verify(messageService, times(1)).sendMessageDevice(rq, DEVICE_NAME);
+        verify(messageService, times(1)).sendMessagePrivate(rq, DEVICE_NAME);
     }
 
     @Test

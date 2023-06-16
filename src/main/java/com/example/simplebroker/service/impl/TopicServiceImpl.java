@@ -5,7 +5,9 @@ import com.example.simplebroker.exception.CustomException;
 import com.example.simplebroker.dto.rq.TopicRqDto;
 import com.example.simplebroker.dto.rq.TopicSubscribeRqDto;
 import com.example.simplebroker.dto.rs.TopicDto;
-import com.example.simplebroker.model.Device;
+import com.example.simplebroker.exception.ExceptionFactory;
+import com.example.simplebroker.model.entities.Device;
+import com.example.simplebroker.model.entities.Topic;
 import com.example.simplebroker.repository.DeviceRepository;
 import com.example.simplebroker.repository.TopicRepository;
 import com.example.simplebroker.service.TopicService;
@@ -13,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,25 +27,35 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public void create(TopicRqDto topicRqDto) {
-        topicRepository.add(topicRqDto.getName());
+        topicRepository.save(Topic
+                .builder()
+                .name(topicRqDto.getName())
+                .build());
     }
 
     @Override
     public TopicsRsDto getAllTopics() {
-        List<TopicDto> topics = topicRepository.getAll()
+        List<TopicDto> topics = topicRepository.findAll()
                 .stream()
-                .map(TopicDto::new)
+                .map(topic -> TopicDto
+                        .builder()
+                        .name(topic.getName())
+                        .build())
                 .collect(Collectors.toList());
         return new TopicsRsDto(topics);
     }
 
     @Override
     public void subscribe(TopicSubscribeRqDto topicSubscribeRqDto, String deviceName) {
-        Device device = deviceRepository.getByName(deviceName);
-        if(!topicRepository.exist(topicSubscribeRqDto.getName())) {
-            throw new CustomException("No such topic exists");
-        }
-        device.getTopics()
-                .add(topicSubscribeRqDto.getName());
+        Device device = deviceRepository.findByName(deviceName)
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Device.class, deviceName));
+        Topic topic = topicRepository.getByName(topicSubscribeRqDto.getName())
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Topic.class, topicSubscribeRqDto.getName()));
+
+        device.getTopics().add(topic);
+        deviceRepository.save(device);
+
+        topic.getDevices().add(device);
+        topicRepository.save(topic);
     }
 }

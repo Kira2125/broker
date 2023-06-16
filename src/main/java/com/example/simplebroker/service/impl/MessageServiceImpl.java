@@ -5,23 +5,29 @@ import com.example.simplebroker.dto.rq.SendMessageDeviceRqDto;
 import com.example.simplebroker.dto.rq.SendMessageTopicRqDto;
 import com.example.simplebroker.dto.rs.MessageDto;
 import com.example.simplebroker.dto.rs.MessagesRsDto;
-import com.example.simplebroker.exception.CustomException;
-import com.example.simplebroker.model.Device;
-import com.example.simplebroker.model.Message;
+import com.example.simplebroker.enums.Status;
+import com.example.simplebroker.enums.TopicType;
+import com.example.simplebroker.exception.ExceptionFactory;
+import com.example.simplebroker.model.entities.Device;
+import com.example.simplebroker.model.entities.Message;
+import com.example.simplebroker.model.entities.Topic;
 import com.example.simplebroker.repository.DeviceRepository;
+import com.example.simplebroker.repository.MessageRepository;
 import com.example.simplebroker.repository.TopicRepository;
 import com.example.simplebroker.service.LogService;
 import com.example.simplebroker.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.example.simplebroker.utils.Utils.PRIVATE_CHANNEL;
+
+//@TODO move all sendMessage methods to topicService
 
 @Service
 @RequiredArgsConstructor
@@ -30,95 +36,114 @@ public class MessageServiceImpl implements MessageService {
     private final DeviceRepository deviceRepository;
     private final TopicRepository topicRepository;
     private final LogService logService;
+    private final MessageRepository messageRepository;
 
     @Override
-    public void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName) {
-        Device toDevice = deviceRepository.getByName(sendMessageDeviceRqDto.getToDevice());
-        toDevice.getMessageQueue().add(createMessage(sendMessageDeviceRqDto.getMessage(), deviceName));
-        logService.logIfNeeded(sendMessageDeviceRqDto.getMessage(), deviceName,
-                List.of(sendMessageDeviceRqDto.getToDevice()));
+    public void sendMessagePrivate(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName) {
+        Device toDevice = deviceRepository.findByName(sendMessageDeviceRqDto.getToDevice())
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Device.class, sendMessageDeviceRqDto.getToDevice()));
+        final Topic privateTopic = topicRepository.getByNameAndType(PRIVATE_CHANNEL + toDevice.getId(), TopicType.PRIVATE)
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Topic.class, PRIVATE_CHANNEL + toDevice.getId()));
+
+
+        Message message = Message.builder()
+                .sourceDeviceName(deviceName)
+                .content(sendMessageDeviceRqDto.getMessage())
+                .topic(privateTopic)
+                .build();
+
+        privateTopic.getMessages().add(message);
+        topicRepository.save(privateTopic);
+
+        logService.logIfNeeded(message, deviceName,
+                privateTopic.getId());
     }
 
     @Override
     public void sendMessageTopic(SendMessageTopicRqDto sendMessageTopicRqDto, String deviceName) {
-        if (!topicRepository.exist(sendMessageTopicRqDto.getTopic())) {
-            throw new CustomException("No such topic exists");
-        }
-        List<Device> subscribers = getSubscribers(deviceName)
-                .stream()
-                .filter(device -> device.getTopics().contains(sendMessageTopicRqDto.getTopic()))
-                .collect(Collectors.toList());
-        subscribers.forEach(
-                device -> device.getMessageQueue().add(createMessageWithTopic(sendMessageTopicRqDto.getMessage(),
-                        deviceName, sendMessageTopicRqDto.getTopic())));
-        logService.logIfNeeded(sendMessageTopicRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
+        Topic topic = topicRepository.getByName(sendMessageTopicRqDto.getTopic())
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Topic.class, sendMessageTopicRqDto.getTopic()));
+
+        Message message = Message.builder()
+                .sourceDeviceName(deviceName)
+                .topic(topic)
+                .content(sendMessageTopicRqDto.getMessage())
+                .build();
+
+        topic.getMessages().add(message);
+
+        topicRepository.save(topic);
+
+        logService.logIfNeeded(message, deviceName, topic.getId());
     }
 
     @Override
     public void sendMessageBroadcast(SendMessageBroadcastRqDto sendMessageBroadcastRqDto, String deviceName) {
-        List<Device> subscribers = getSubscribers(deviceName);
-        subscribers.forEach(
-                device -> device.getMessageQueue()
-                        .add(createMessage(sendMessageBroadcastRqDto.getMessage(), deviceName)));
-        logService.logIfNeeded(sendMessageBroadcastRqDto.getMessage(), deviceName, getSubscribersNames(subscribers));
+
+        List<Topic> topics = topicRepository.getByType(TopicType.BROADCAST);
+
+        for(Topic topic : topics) {
+            Message message = Message.builder()
+                    .topic(topic)
+                    .sourceDeviceName(deviceName)
+                    .content(sendMessageBroadcastRqDto.getMessage())
+                    .build();
+
+            topic.getMessages().add(message);
+        }
+
+        topicRepository.saveAll(topics);
+
+//        logService.logIfNeeded(message, deviceName, topic.getId());
     }
 
     //@TODO return batch of messages to avoid subscriber overload
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MessagesRsDto getMessages(String deviceName) {
-        deviceRepository.changeMessagesStatusToPendingByName(deviceName);
-        Queue<Message> messageQueue = deviceRepository.getByName(deviceName).getMessageQueue();
-        LinkedBlockingQueue<MessageDto> messageDtos = messageQueue
-                .stream()
+        MessagesRsDto response = new MessagesRsDto();
+
+        Device device = deviceRepository.findByName(deviceName)
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Device.class, deviceName));
+
+        List<Topic> topics = device.getTopics();
+
+        if (topics.isEmpty()) {
+            response.setMessages(List.of());
+            return response;
+        }
+
+        List<Message> messageModels = topics.stream()
+                .flatMap(topic -> topic.getMessages().stream())
+                .collect(Collectors.toList());
+
+        final List<MessageDto> messages = messageModels.stream()
                 .map(this::mapMessageToDto)
-                .collect(Collectors.toCollection(LinkedBlockingQueue::new));
-        return new MessagesRsDto(messageDtos);
+                .sorted(Comparator.comparing(MessageDto::getDate).reversed())
+                .collect(Collectors.toList());
+
+        for(Message m : messageModels) {
+            m.setStatus(Status.PENDING);
+        }
+
+        messageRepository.saveAll(messageModels);
+        response.setMessages(messages);
+
+        return response;
     }
 
     @Override
     public void acknowledgeMessages(String deviceName) {
-        deviceRepository.deletePendingMessagesByName(deviceName);
-    }
-
-    private List<Device> getSubscribers(String deviceName) {
-        return deviceRepository.getAll()
-                .stream()
-                .filter(device -> !Objects.equals(device.getName(), deviceName))
-                .collect(Collectors.toList());
-    }
-
-    private List<String> getSubscribersNames(List<Device> subscribers) {
-        return subscribers.stream()
-                .map(Device::getName)
-                .collect(Collectors.toList());
-    }
-
-    private Message createMessageWithTopic(String message, String sender, String topic) {
-        return create(message, sender)
-                .topic(topic)
-                .build();
-    }
-
-    private Message createMessage(String message, String sender) {
-        return create(message, sender)
-                .build();
-    }
-
-    private Message.MessageBuilder create(String message, String sender) {
-        return Message
-                .builder()
-                .message(message)
-                .senderDeviceName(sender)
-                .date(new Timestamp(new Date().getTime()));
+        messageRepository.deleteStatusPendingBySourceDeviceName(deviceName);
     }
 
     private MessageDto mapMessageToDto(Message message) {
         return MessageDto
                 .builder()
-                .message(message.getMessage())
-                .senderDeviceName(message.getSenderDeviceName())
-                .topic(message.getTopic())
-                .date(message.getDate())
+                .message(message.getContent())
+                .senderDeviceName(message.getSourceDeviceName())
+                .topic(message.getTopic().getName())
+                .date(message.getCreated())
                 .build();
     }
 

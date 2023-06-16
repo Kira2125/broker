@@ -1,21 +1,22 @@
 package com.example.simplebroker.repository;
 
-import com.example.simplebroker.model.Device;
+import com.example.simplebroker.model.entities.Device;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
-public interface DeviceRepository {
+public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
-    void add(Device device);
+    void deleteByName(String deviceName);
 
-    void removeByName(String deviceName);
+    Optional<Device> findByName(String deviceName);
 
-    List<Device> getAll();
 
-    Device getByName(String name);
+//    Device getByName(String name);
 
-    void changeMessagesStatusToPendingByName(String deviceName);
-
-    void deletePendingMessagesByName(String deviceName);
+//    void changeMessagesStatusToPendingByName(String deviceName);
+//
+//    void deletePendingMessagesByName(String deviceName);
 }

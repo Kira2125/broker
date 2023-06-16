@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @AllArgsConstructor
@@ -12,5 +13,5 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Builder(toBuilder = true)
 @Data
 public class MessagesRsDto {
-    private LinkedBlockingQueue<MessageDto> messages;
+    private List<MessageDto> messages;
 }

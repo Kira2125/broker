@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
 public class Log {
-    private final String sender;
+    private final String senderName;
+    private final UUID topicId;
+    private final UUID messageId;
     private final List<String> keywords;
-    private final String message;
-    private final List<String> recipients;
 }

@@ -19,6 +19,13 @@ public class BrokerExceptionHandler {
         return new ResponseEntity<>(rs, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorRsDto> handleNotFoundException(CustomException customException) {
+        log.error("not found exception", customException);
+        ErrorRsDto rs = new ErrorRsDto(customException.getMessage());
+        return new ResponseEntity<>(rs, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorRsDto> handleUnexpectedException(Exception e) {
         log.error("unexpected exception", e);

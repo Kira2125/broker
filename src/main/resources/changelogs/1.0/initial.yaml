@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09042022_create_device_table
+      author: KK
+      changes:
+        - sql:
+            sql: "create table device
+                  (
+                    id   uuid not null default uuid_generate_v1() constraint pk_device_id primary key,
+                    name varchar(255) not null unique
+                  );"
+  - changeSet:
+      id: 09042022_create_topic_table
+      author: KK
+      changes:
+        - sql:
+            sql: "create table topic
+                  (
+                      id uuid not null default uuid_generate_v1()
+                          constraint pk_topic_id primary key,
+                      name varchar(255) not null unique,
+                      type text not null
+                  );"
+  - changeSet:
+      id: 09042022_create_device_topic_table
+      author: KK
+      changes:
+        - sql:
+            sql: "create table device_topic
+                  (
+                      device_id uuid not null,
+                      topic_id uuid not null,
+                      constraint fk_device foreign key(device_id) references device(id),
+                      constraint fk_topic foreign key(topic_id) references topic(id)
+                  );"
+  - changeSet:
+      id: 09042022_create_message_table
+      author: KK
+      changes:
+        - sql:
+            sql: "create table message
+                  (
+                      id uuid not null default uuid_generate_v1()
+                          constraint pk_message_id primary key,
+                      source_device_name varchar(255) not null,
+                      content text not null,
+                      status text not null,
+                      created timestamp not null,
+                      topic_id uuid not null,
+                      constraint fk_topic foreign key(topic_id) references topic(id)
+                  );"
+  - changeSet:
+      id: 09042022_create_broadcast_topic
+      author: KK
+      changes:
+        - sql:
+            sql: "insert into topic(name, type)
+                  values(
+                      'BROADCAST',
+                      'BROADCAST'
+                  );"

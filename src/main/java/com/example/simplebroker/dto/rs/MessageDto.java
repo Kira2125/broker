@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,5 +17,5 @@ public class MessageDto {
     private String message;
     private String topic;
     private String senderDeviceName;
-    private Timestamp date;
+    private ZonedDateTime date;
 }

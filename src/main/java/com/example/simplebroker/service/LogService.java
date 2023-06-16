@@ -1,7 +1,10 @@
 package com.example.simplebroker.service;
 
-import java.util.List;
+import com.example.simplebroker.model.entities.Message;
+
+import java.util.UUID;
 
 public interface LogService {
-    void logIfNeeded(String message, String from, List<String> subscribers);
+
+    void logIfNeeded(Message message, String senderId, UUID topicId);
 }

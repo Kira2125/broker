@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public interface MessageService {
     void sendMessageTopic(SendMessageTopicRqDto sendMessageTopicRqDto, String deviceName);
     void sendMessageBroadcast(SendMessageBroadcastRqDto sendMessageBroadcastRqDto, String deviceName);
-    void sendMessageDevice(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName);
+    void sendMessagePrivate(SendMessageDeviceRqDto sendMessageDeviceRqDto, String deviceName);
     MessagesRsDto getMessages(String deviceName);
     void acknowledgeMessages(String deviceName);
 }

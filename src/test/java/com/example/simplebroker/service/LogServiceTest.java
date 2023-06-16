@@ -1,6 +1,7 @@
 package com.example.simplebroker.service;
 
 import com.example.simplebroker.AbstractSpringBootTest;
+import com.example.simplebroker.model.entities.Message;
 import com.example.simplebroker.repository.LogRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
+import java.util.UUID;
 
 public class LogServiceTest extends AbstractSpringBootTest {
 
@@ -23,18 +25,27 @@ public class LogServiceTest extends AbstractSpringBootTest {
 
     private final String noLogMessage = "test4wdddda";
     private final String fromDeviceName = "destination";
-    private final List<String> subscribers = List.of("lenovo22", "imac4");
 
     @Test
     public void should_save_data_to_log() {
         String logMessage = logList.toString().replaceAll(", |\\[|]", " ");
-        logService.logIfNeeded(logMessage, fromDeviceName, subscribers);
+        Message message = Message.builder()
+                .id(UUID.randomUUID())
+                .content(logMessage)
+                .build();
+
+        logService.logIfNeeded(message, fromDeviceName, UUID.randomUUID());
         Mockito.verify(logRepository, Mockito.timeout(1000).times(1)).save(Mockito.any());
     }
 
     @Test
     public void should_not_save_data_to_log() {
-        logService.logIfNeeded(noLogMessage, fromDeviceName, subscribers);
+        Message message = Message.builder()
+                .id(UUID.randomUUID())
+                .content(noLogMessage)
+                .build();
+
+        logService.logIfNeeded(message, fromDeviceName, UUID.randomUUID());
         Mockito.verify(logRepository, Mockito.timeout(1000).times(0)).save(Mockito.any());
     }
 }
