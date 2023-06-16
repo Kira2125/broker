@@ -52,12 +52,11 @@ public class DeviceServiceImpl implements DeviceService {
 
         //@TODO create partial index on topic type
         //@TODO decide how to organize broadcasting and public topics with deletion after reading, we cannot create copy for every broadcast and public topic
-        Topic broadcastTopic = Topic
-                .builder()
-                .name(BROADCAST_CHANNEL + savedDevice.getId())
-                .type(TopicType.BROADCAST)
-                .devices(new ArrayList<>(List.of(savedDevice)))
-                .build();
+        Topic broadcastTopic = topicRepository.getByType(TopicType.BROADCAST)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> ExceptionFactory.getNotFoundException(Topic.class, TopicType.BROADCAST.name()));
+
         broadcastTopic.getDevices().add(device);
         topicRepository.saveAll(new ArrayList<>(List.of(privateTopic, broadcastTopic)));
 

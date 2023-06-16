@@ -64,5 +64,5 @@ public class Topic {
     private List<Device> devices;
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Message> messages;
+    private List<MessageDevice> messageDevices;
 }

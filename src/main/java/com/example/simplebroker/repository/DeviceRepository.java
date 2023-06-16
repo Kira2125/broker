@@ -9,14 +9,5 @@ import java.util.UUID;
 
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
-    void deleteByName(String deviceName);
-
     Optional<Device> findByName(String deviceName);
-
-
-//    Device getByName(String name);
-
-//    void changeMessagesStatusToPendingByName(String deviceName);
-//
-//    void deletePendingMessagesByName(String deviceName);
 }
